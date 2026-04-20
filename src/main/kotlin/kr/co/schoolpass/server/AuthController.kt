@@ -16,7 +16,7 @@ class AuthController(
     private val schoolRepository: SchoolRepository
 ) {
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     fun login(@RequestBody req: LoginRequest): Admin {
         val admin = adminRepository.findByUsername(req.username)
             ?: throw RuntimeException("사용자 없음")
@@ -28,7 +28,7 @@ class AuthController(
         return admin
     }
 
-    @PostMapping("/api/signup")
+    @PostMapping("/signup")
     fun signup(@RequestBody req: SignupRequest): Admin {
 
         // 1. 학교 생성
