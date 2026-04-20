@@ -20,11 +20,6 @@ class StudentController(
     }
 
     @GetMapping
-    fun list(): List<Student> {
-        return repository.findAll()
-    }
-
-    @GetMapping
     fun getStudents(@RequestParam schoolId: Long): List<Student> {
         return repository.findBySchoolId(schoolId)
     }
