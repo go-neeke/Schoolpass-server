@@ -1,5 +1,5 @@
-import kr.co.schoolpass.server.AdminRepository
-import kr.co.schoolpass.server.SchoolRepository
+package kr.co.schoolpass.server
+
 import kr.co.schoolpass.server.data.Admin
 import kr.co.schoolpass.server.data.LoginRequest
 import kr.co.schoolpass.server.data.School
