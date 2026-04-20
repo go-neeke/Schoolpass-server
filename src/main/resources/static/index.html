@@ -35,8 +35,13 @@
             background-color: #f9f9f9;
         }
 
-        .refresh {
+        .top-bar {
             margin-bottom: 10px;
+        }
+
+        button {
+            padding: 6px 12px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -45,7 +50,10 @@
 
 <h1>📋 학생 탑승 목록</h1>
 
-<button class="refresh" onclick="loadStudents()">새로고침</button>
+<div class="top-bar">
+    <button onclick="loadStudents()">새로고침</button>
+    <button onclick="logout()">로그아웃</button>
+</div>
 
 <table>
     <thead>
@@ -59,35 +67,52 @@
     </tr>
     </thead>
 
-    <tbody id="studentTable">
-    </tbody>
+    <tbody id="studentTable"></tbody>
 </table>
 
 <script>
+    // 로그인 정보 확인
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (!schoolId) {
+        alert("로그인이 필요합니다.");
+        location.href = "/login.html";
+    }
+
+    function logout() {
+        localStorage.removeItem("schoolId");
+        location.href = "/login.html";
+    }
+
     function formatTime(time) {
-        if (!time) return '';
+        if (!time) return "";
 
         const date = new Date(time);
 
-        return date.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
+        return date.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
         });
     }
 
     async function loadStudents() {
         try {
-            const res = await fetch('/api/students?t=' + new Date().getTime());
+            const res = await fetch(`/api/students?schoolId=${schoolId}&t=${new Date().getTime()}`);
             const data = await res.json();
 
             console.log("데이터:", data);
 
-            const table = document.getElementById('studentTable');
-            table.innerHTML = '';
+            const table = document.getElementById("studentTable");
+            table.innerHTML = "";
+
+            if (data.length === 0) {
+                table.innerHTML = `<tr><td colspan="6">데이터 없음</td></tr>`;
+                return;
+            }
 
             data.forEach(student => {
                 const row = `
@@ -105,13 +130,14 @@
 
         } catch (e) {
             console.error("API 호출 실패:", e);
+            alert("데이터 불러오기 실패");
         }
     }
 
     // 최초 로딩
     loadStudents();
 
-    // 3초마다 자동 새로고침
+    // 자동 갱신 (3초)
     setInterval(loadStudents, 3000);
 </script>
 
