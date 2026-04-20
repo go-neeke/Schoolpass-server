@@ -1,16 +1,15 @@
-package kr.co.schoolpass.server
+package kr.co.schoolpass.server.data
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "students")
 data class Student(
+
+    @ManyToOne
+    @JoinColumn(name = "school_id")
+    val school: School,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
