@@ -11,6 +11,7 @@ import kr.co.yellowpass.server.service.FcmService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @RestController
 @RequestMapping("/api")
@@ -43,7 +44,7 @@ class BoardingController(
             // ✅ 1. 로그 저장
             val log = BoardingLog(
                 student = student,
-                boardedAt = LocalDateTime.now(),
+                boardedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
                 vehicleNo = vehicle.vehicleNo
             )
 
