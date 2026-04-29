@@ -248,12 +248,14 @@ class BoardingController(
 
         val result = logs.map {
             BoardingHistoryResponse(
+                boardingId = it.id ?: 0L,
                 studentId = it.student.id ?: 0,
                 studentName = it.student.name,
                 grade = it.student.grade,
                 classNo = it.student.classNo,
                 boardedAt = it.boardedAt.toString(),
-                vehicleNo = it.vehicleNo
+                vehicleNo = it.vehicleNo,
+                schoolName = it.student.school.name,
             )
         }
 
