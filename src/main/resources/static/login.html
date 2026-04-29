@@ -36,7 +36,6 @@
         }
 
         .signup {
-            margin-top: 10px;
             background: #eee;
         }
     </style>
@@ -51,9 +50,16 @@
     <input id="password" type="password" placeholder="비밀번호">
 
     <button onclick="login()">로그인</button>
+
+    <!-- 🔥 회원가입 버튼 추가 -->
+    <button class="signup" onclick="goSignup()">회원가입</button>
 </div>
 
 <script>
+    function goSignup() {
+        location.href = "/signup.html";
+    }
+
     async function login() {
         try {
             const res = await fetch('/api/auth/login', {
@@ -73,7 +79,6 @@
 
             const data = await res.json();
 
-            // 🔥 핵심 수정
             localStorage.setItem("schoolId", data.schoolId);
 
             alert("로그인 성공");
