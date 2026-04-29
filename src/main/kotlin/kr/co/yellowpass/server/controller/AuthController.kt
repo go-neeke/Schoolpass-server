@@ -65,12 +65,12 @@ class AuthController(
             }
 
             Role.PARENT -> {
-                val parent = parentRepository.findByPhone(req.phone)
+                val parent = parentRepository.findByPhoneNormalized(req.phone)
                     ?: return ResponseEntity.status(401).body("사용자 없음")
 
-                if (parent.password != req.password) {
-                    return ResponseEntity.status(401).body("비밀번호 틀림")
-                }
+//                if (parent.password != req.password) {
+//                    return ResponseEntity.status(401).body("비밀번호 틀림")
+//                }
 
                 ResponseEntity.ok(
                     LoginResponse(
