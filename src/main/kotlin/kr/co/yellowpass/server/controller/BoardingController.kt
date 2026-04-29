@@ -34,19 +34,22 @@ class BoardingController(
 
         return try {
 
-            // ✅ 학생 조회
+            // ✅ 1. 차량 조회 (먼저!)
+            val vehicle = vehicleRepository.findById(req.vehicleId)
+                .orElse(null)
+                ?: return ResponseEntity.badRequest().body("차량 없음")
+
+            // 🔥 필요하면 schoolId도 여기서 사용 가능
+            val schoolId = vehicle.school?.id
+
+            // ✅ 2. 학생 조회
             val student = studentRepository.findByQrCode(req.qrCode)
                 ?: return ResponseEntity.badRequest().body("학생 없음")
 
             val studentId = student.id
                 ?: return ResponseEntity.badRequest().body("학생 ID 없음")
 
-            // ✅ 차량 조회
-            val vehicle = vehicleRepository.findById(req.vehicleId)
-                .orElse(null)
-                ?: return ResponseEntity.badRequest().body("차량 없음")
-
-            // ✅ 1. 로그 저장
+            // ✅ 3. 로그 저장
             val log = BoardingLog(
                 student = student,
                 boardedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
@@ -55,21 +58,21 @@ class BoardingController(
 
             boardingLogRepository.save(log)
 
-            // ✅ 2. 보호자 매핑 조회
+            // ✅ 4. 보호자 조회
             val mappings = parentStudentRepository.findByStudentId(studentId)
 
             if (mappings.isEmpty()) {
-                println("❌ 부모 연결 없음")
+                println("⚠️ 부모 연결 없음: studentId=$studentId")
             }
 
-            // ✅ 3. 토큰 조회 + 푸시
+            // ✅ 5. 푸시 전송
             mappings.forEach { mapping ->
 
                 val tokens = deviceTokenRepository.findAllByParentId(mapping.parent.id)
 
                 tokens.forEach { dt ->
-                    val token = dt.fcmToken
 
+                    val token = dt.fcmToken
                     if (token.isNullOrBlank()) return@forEach
 
                     try {
@@ -84,10 +87,13 @@ class BoardingController(
                 }
             }
 
+            // ✅ 6. 응답
             ResponseEntity.ok(
                 mapOf(
                     "result" to "OK",
-                    "studentName" to student.name
+                    "studentName" to student.name,
+                    "vehicleNo" to vehicle.vehicleNo,
+                    "boardedAt" to log.boardedAt.toString()
                 )
             )
 
